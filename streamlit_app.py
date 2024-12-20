@@ -15,12 +15,7 @@ st.write(
 cnx = st.connection("snowflake")
 session = cnx.session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('fruit_name'), col('search_on'))
-#st.dataframe(data=my_dataframe, use_container_width=True)
-#st.stop()
-
 pd_df = my_dataframe.to_pandas()
-st.dataframe(pd_df)
-st.stop()
 
 name = st.text_input('Name on Smoothie:')
 st.write('The name on smoothie will be: ', name)
@@ -31,6 +26,8 @@ if ingredients_list:
     ingredients_string = ''
     for fruit in ingredients_list:
         ingredients_string += fruit + ' '
+        search_on= pd_df.loc[pd_df['fruit_name'] == fruit, 'search_on'].iloc[0]
+        st.write('The search value for '+ fruit + ' is '+ search_on)
         st.subheader(fruit + ' Nutrition information')
         smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/"+fruit)
         sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
